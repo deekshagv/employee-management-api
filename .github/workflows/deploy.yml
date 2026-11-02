@@ -1,0 +1,27 @@
+name: Employee API - Three Environment Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+      - prod
+
+  workflow_dispatch:
+
+jobs:
+  identify-environment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Identify deployment environment
+        run: |
+          echo "Current branch: $GITHUB_REF_NAME"
+
+          if [ "$GITHUB_REF_NAME" = "dev" ]; then
+            echo "Environment: Development"
+          elif [ "$GITHUB_REF_NAME" = "staging" ]; then
+            echo "Environment: Staging"
+          elif [ "$GITHUB_REF_NAME" = "prod" ]; then
+            echo "Environment: Production"
+          fi
