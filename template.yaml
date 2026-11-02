@@ -1,0 +1,68 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: Employee Management API with three deployment environments
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: nodejs24.x
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+
+Resources:
+  EmployeeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Events:
+        GetEmployees:
+          Type: Api
+          Properties:
+            Path: /employees
+            Method: get
+
+        CreateEmployee:
+          Type: Api
+          Properties:
+            Path: /employees
+            Method: post
+
+        GetEmployee:
+          Type: Api
+          Properties:
+            Path: /employees/{id}
+            Method: get
+
+        UpdateEmployee:
+          Type: Api
+          Properties:
+            Path: /employees/{id}
+            Method: put
+
+        DeleteEmployee:
+          Type: Api
+          Properties:
+            Path: /employees/{id}
+            Method: delete
+
+Outputs:
+  EmployeeApiUrl:
+    Description: Employee API endpoint
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/employees"
+
+  EmployeeFunctionArn:
+    Description: Employee Lambda Function ARN
+    Value: !GetAtt EmployeeFunction.Arn
